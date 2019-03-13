@@ -1,0 +1,31 @@
+
+ .act{
+ 	padding: 3px !important;
+ 	padding-left: 5px !important;
+ 	padding-right: 5px !important;
+ 	border: 1px #eee solid !important;
+ 	background:  #f8f9f9  !important;
+ }
+ .green{
+ 	color:  #148f77 !important;
+ }
+
+ .red{
+ 	color:  #c0392b  !important;
+ }
+
+ .table-head > thead > tr > th{
+ 	background:  #85929e !important;
+ 	color: #222 !important;
+ }
+ label.error{
+ 	color:  #ec7063 !important;
+ 	font-size: 0.8em !important;
+ 	font-weight: normal;
+ }
+ .text-header{
+ 	margin-top: 20px !important;
+ 	color: #fff !important;
+ 	padding: 10px !important;
+ 	padding-top: 30px !important;
+ }
