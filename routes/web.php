@@ -28,4 +28,19 @@ Route::group(["middleware"=>['auth.login','auth.menu']], function(){
 		Route::post('/update-menu', 'SettingController@submit_update_menu');
 	});
 	
+	//seting role
+	Route::group(['prefix'=>'setting-role'], function(){
+		Route::get('/', 'SettingController@setting_role');
+		Route::get('/dt', 'SettingController@datatable_role');
+		Route::get('/get-data/{uuid}', 'SettingController@get_data_role');
+		Route::get('/menu/{uuid}', 'SettingController@get_menu_role');
+		Route::get('/dt-menu/{uuid}', 'SettingController@datatable_menu_role');
+		Route::get('/get-role-menu/{uuid}', 'SettingController@get_data_role_menu');
+		Route::post('/insert-role', 'SettingController@submit_insert_role');
+		Route::post('/update-role', 'SettingController@submit_update_role');
+		Route::post('/delete-role', 'SettingController@submit_delete_role');
+		Route::post('/insert-menu', 'SettingController@submit_insert_menu_role');
+		Route::post('/update-menu', 'SettingController@submit_update_menu_role');
+		Route::post('/delete-menu', 'SettingController@submit_delete_menu_role');
+	});
 });
