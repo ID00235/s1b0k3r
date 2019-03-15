@@ -129,7 +129,7 @@
     <div class="pull-right hidden-xs">
       <small>Dikembangkan Oleh: Diskominfo - 2019 </small>
     </div>
-    <strong>Copyright &copy; 2019 Aplikasi LPPK (Laporan Perkembangan Pelaksanaan Kegiatan)</strong>
+    <strong>Copyright &copy; 2019 Aplikasi SiBooker (Sistem Informasi Buku Kerja)</strong>
   </footer>
 </div>
 <!-- ./wrapper -->

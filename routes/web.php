@@ -43,4 +43,13 @@ Route::group(["middleware"=>['auth.login','auth.menu']], function(){
 		Route::post('/update-menu', 'SettingController@submit_update_menu_role');
 		Route::post('/delete-menu', 'SettingController@submit_delete_menu_role');
 	});
+
+	Route::group(['prefix'=>'setting-user'], function(){
+		Route::get('/', 'SettingController@setting_user');
+		Route::get('/dt', 'SettingController@datatable_user');
+		Route::get('/get-data/{uuid}', 'SettingController@get_data_user');
+		Route::post('/insert-user', 'SettingController@submit_insert_user');
+		Route::post('/update-user', 'SettingController@submit_update_user');
+		Route::post('/delete-user', 'SettingController@submit_delete_user');
+	});
 });

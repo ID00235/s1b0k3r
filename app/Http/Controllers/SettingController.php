@@ -378,5 +378,134 @@ class SettingController extends Controller
         }
     }
 
+    //#######################################################################################
+    
+    function setting_user()
+    {
+        $pagetitle = "Setting User";
+        $smalltitle = "Pengaturan Menu Aplikasi";
+        return view('setting.user', compact('pagetitle','smalltitle'));
+    }
+
+    function datatable_user(Request $r){
+        
+        $filter = "";
+        if (request()->has('search')) {
+            $search = request('search');
+            $keyword = $search['value'];
+            if(strlen($keyword)>=3){
+                $keyword = strtolower($keyword);
+                $filter = " and (lower(a.username) like '%$keyword%' or lower(b.username) like '%$keyword%') ";
+            }   
+        }
+
+         $sql_union = "SELECT a.nama_pengguna, a.email, a.uuid, a.username, c.nama_role FROM users AS a, user_role AS b, role AS c
+                        WHERE a.id = b.id_user AND b.id_role = c.id_role AND c.id_role = 4";
+
+         $query = DB::table(DB::raw("($sql_union) as x"))
+                    ->select(['username', 'email', 'uuid', 'nama_pengguna','nama_role']);
+
+         return Datatables::of($query)
+            ->addColumn('action', function ($query) {
+                    $edit = ""; $delete = "";
+                    if($this->ucu()){
+                        $edit = '<a href="#" class="act green" data-toggle="modal" data-uuid="'.$query->uuid.'"data-target="#modal-edit-user" title="Edit"><i class="la la-edit"></i></a> ';
+                    }
+                    if($this->ucd()){
+                        $delete = '<a href="#" data-target="#modal-hapus-user" data-uuid="'.$query->uuid.'"  title="Hapus" data-toggle="modal" class="act red"><i class="la la-times"></i></a> ';
+                    }
+                    $action =  $edit."".$delete;
+                    if ($action==""){$action='<a href="#" class="act"><i class="la la-lock"></i></a>'; }
+                        return $action;
+            })
+            ->addIndexColumn()
+            ->rawColumns(['action','label'])
+            ->make(true);
+    }
+
+    function get_data_user($uuid)
+    {
+        $user = DB::table('users')->where('uuid', $uuid)->first();
+        if($user)
+        {
+            $respon = array('status'=>true,'data'=>$user, 
+                'informasi'=>'User Id : '. $user->nama_pengguna);
+            return response()->json($respon);
+        }
+        $respon = array('status'=>false,'message'=>'Data Tidak Ditemukan');
+        return response()->json($respon);
+    }
+
+    function submit_insert_user(Request $r){
+        if($this->ucc()){
+            loadHelper('format');
+            $uuid = $this->genUUID();
+
+            $record = array(
+                "uuid"=> $uuid, 
+                "nama_pengguna"=>trim($r->nama_pengguna), 
+                "username"=>trim($r->username),
+                "email"=>$r->email, 
+                "password"=>bcrypt($r->password)
+            );
+
+            DB::table('users')-> insert($record);
+            $id_user = DB::table('users')->where('uuid',$uuid)->first()->id;
+            $record = array("id_user"=>$id_user,"id_role"=>4,"uuid"=>$this->genUUID());
+            DB::table('user_role')->insert($record);
+            $respon = array('status'=>true,'message'=>'User Berhasil Ditambahkan!', '_token'=>csrf_token());
+            return response()->json($respon);
+        }else{
+            $respon = array('status'=>false,'message'=>'Akses Ditolak!');
+            return response()->json($respon);
+        }
+    }
+
+    function submit_update_user(Request $r){
+        if($this->ucu()){
+            loadHelper('format');
+            $uuid = $r->uuid;
+
+            $record = array(
+                "uuid"=>$uuid, 
+                "nama_pengguna"=>trim($r->nama_pengguna),
+                "username"=>trim($r->username), 
+                "email"=>$r->email,
+                "password"=>bcrypt($r->urutan)
+            );
+
+            DB::table('users')->where('uuid', $uuid)->update($record);
+            $respon = array('status'=>true,'message'=>'Data Menu Berhasil Disimpan!', 
+                '_token'=>csrf_token());
+            return response()->json($respon);
+        }else{
+            $respon = array('status'=>false,'message'=>'Akses Ditolak!');
+            return response()->json($respon);
+        }
+    }
+
+    function submit_delete_user(Request $r){
+        if($this->ucd()){
+            loadHelper('format');
+            $uuid = $r->uuid;
+            $data = DB::table('users')->where("uuid", $uuid)->first();
+            
+            $exist_user_role = DB::table('user_role')->where('id_user', $data->id_user)->count();
+            if($exist_user_role = 4){
+                DB::table('users')->where('uuid', $uuid)->delete();
+                // DB::table('user_role')->where('id_user', $exist_user_role)->delete();
+                $respon = array('status'=>true,'message'=>'Data User Berhasil Dihapus!', 
+                '_token'=>csrf_token());
+            }else{
+                $respon = array('status'=>false,'message'=>'Data User Tidak Dihapus!', 
+                '_token'=>csrf_token());
+            }            
+            return response()->json($respon);
+        }else{
+            $respon = array('status'=>false,'message'=>'Akses Ditolak!');
+            return response()->json($respon);
+        }
+    }
+
 
 }
